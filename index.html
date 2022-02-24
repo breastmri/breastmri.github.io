@@ -10,11 +10,65 @@
   </head>
   
   <body>
+    <style>.card-container {
+        display: grid;
+        padding: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        grid-gap: 1rem;
+    }
+    .card {
+        display: grid;
+    }
+    .card .button {
+        align-self: end;
+    }
+
+    html {
+        font-size: 16px;
+        font-family: 'Open Sans', 'Helvetica Neue', 'Arial', sans-serif;
+    }
+
+    body {
+        background-color: #efefef;
+    }
+    * {
+        box-sizing: border-box;
+    }
+    .card {
+        box-shadow: 0px 1px 5px #555;
+        background-color: white;
+    }
+    .card__title {
+        font-size: 1.7rem;
+        padding: .5rem;
+    }
+    .card__description {
+        padding: .5rem;
+        line-height: 1.6em;
+        min-height: 10em;
+    }
+    .button {
+        display: block;
+        background-color: tomato;
+        padding: 10px 20px;
+        color: white;
+        text-decoration: none;
+        text-align: center;
+        transition: .3s ease-out;
+    }
+    img {
+        max-width: 100%;
+    }
+    .card__thumbnail{
+    min-height: 22em;
+    }
+
+    </style>
+
     <h1>Breast MRI</h1>
     <main>
     </main>
   </body>
-  
   
   <script>
     const url = "https://docs.google.com/spreadsheets/d/1etlVrxXM18TMqmfJoKsc2nhfb-5ax92fJ5XPv6L_L8U/export?format=csv"
