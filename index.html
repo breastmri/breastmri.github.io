@@ -26,10 +26,9 @@
         return csv().fromString(csvtext);
     }).then(function(csv) {
         csv.forEach(function(row) {
-        main.innerHTML += row.case;
-        main.innerHTML +='<article class="card">'
+        main.innerHTML +='<article class="card">';
         main.innerHTML +='<header class="card__title"><h4>Case ' + row.case + '</h4></header>';
-        main.innerHTML +='<figure class="card__thumbnail"><a href="' + row.pacsbin + '">'
+        main.innerHTML +='<figure class="card__thumbnail"><a href="' + row.pacsbin + '">';
         main.innerHTML +='<img src ="https://prod-images-static.radiopaedia.org/images/1396118/b73eab20f8ce05a91b01c2b554f83e_gallery.jpg"></a></figure>';
         main.innerHTML +='<main class="card__description">' + row.dx + '</main>';
         main.innerHTML +='</article>';
