@@ -81,8 +81,8 @@
     }).then(function(csv) {
         csv.forEach(function(row) {
         main.innerHTML +='<article class="card">';
-        main.innerHTML +='<header class="card__title"><h4><a href="' + row.pacsbin + '">Case ' + row.case + '</h4></a></header>';
-        main.innerHTML +='<figure class="card__thumbnail"><img src ="' + row.img + '"></figure>';
+        main.innerHTML +='<header class="card__title"><h4>Case ' + row.case + '</h4></header>';
+        main.innerHTML +='<figure class="card__thumbnail"><a href="' + row.pacsbin + '"><img src ="' + row.img + '"></a></figure>';
         main.innerHTML +='<main class="card__description">' + row.dx + '</main>';
         main.innerHTML +='</article>';
         });
