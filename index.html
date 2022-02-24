@@ -19,6 +19,22 @@
   <script>
     const url = "https://docs.google.com/spreadsheets/d/1etlVrxXM18TMqmfJoKsc2nhfb-5ax92fJ5XPv6L_L8U/export?format=csv"
     const main = document.querySelector("main")
-    fetch(url).then(result=>result.text()).then(csvtext=>main.innerHTML=csvtext);
+
+    main.innerHTML +='<section class="card-container">'
+    // get google sheets data and dump to csv ––>  
+    fetch(url).then(result=>result.text()).then(function(csvtext) {
+        return csv().fromString(csvtext);
+    }).then(function(csv) {
+        csv.forEach(function(row) {
+        main.innerHTML += row.case;
+        main.innerHTML +='<article class="card">'
+        main.innerHTML +='<header class="card__title"><h4>Case ' + row.case + '</h4></header>';
+        main.innerHTML +='<figure class="card__thumbnail"><a href="' + row.pacsbin + '">'
+        main.innerHTML +='<img src ="https://prod-images-static.radiopaedia.org/images/1396118/b73eab20f8ce05a91b01c2b554f83e_gallery.jpg"></a></figure>';
+        main.innerHTML +='<main class="card__description">' + row.dx + '</main>';
+        main.innerHTML +='</article>';
+        });
+    });
+    main.innerHTML +='</section>';
   </script>
 </html>
