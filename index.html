@@ -10,12 +10,11 @@
 
     <style>
         .card {
-          box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+          box-shadow: 0 1px 5px 0 rgba(0,0,0,0.2);
           transition: 0.3s;
           margin: 50px 20px 20px 20px;
           width: calc(33.3333% - 40px); /* 1/3 minus the margins (20+20) */
           border-radius: 5px;
-          color: white;
           float: left;
         }
         .card:hover {
@@ -24,6 +23,11 @@
         img {
           border-radius: 5px 5px 0 0;
           max-width: 100%;
+        }
+        .card-img-top {
+            width: 100%;
+            height: 15vw;
+            object-fit: cover;
         }
         .container {
           padding: 2px 16px;
@@ -41,12 +45,16 @@
     const url = "https://docs.google.com/spreadsheets/d/1etlVrxXM18TMqmfJoKsc2nhfb-5ax92fJ5XPv6L_L8U/export?format=csv"
     const main = document.querySelector("main")
 
-    // get google sheets data and dump to csv ––>  
+    // fetch gs data -> csv
     fetch(url).then(result=>result.text()).then(function(csvtext) {
         return csv().fromString(csvtext);
-    }).then(function(csv) {
-        csv.forEach(function(row) {
-        main.innerHTML +='<div class="card"><div class="title">Case ' + row.case + '</div><a href="'+ row.pacsbin +'"><img src ="' + row.img + '"></a><p>' + row.dx + '</p></div>'; //dont break the div into multiple innerhtml
+        }).then(function(csv) {
+        csv.forEach(function(row) 
+        {
+        // Code for csv based card
+        main.innerHTML +='<div class="card"><div class="title"> Case ' + row.case + '</div>' 
+        + '<a href="'+ row.pacsbin +'"><img src ="' + row.img + '" class="card-img-top"></a>'
+        + '<p>' + row.dx + '</p></div>';
         });
     });
   </script>
