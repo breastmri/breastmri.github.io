@@ -74,19 +74,17 @@
     const url = "https://docs.google.com/spreadsheets/d/1etlVrxXM18TMqmfJoKsc2nhfb-5ax92fJ5XPv6L_L8U/export?format=csv"
     const main = document.querySelector("main")
 
-    main.innerHTML +='<section class="card-container">'
     // get google sheets data and dump to csv ––>  
     fetch(url).then(result=>result.text()).then(function(csvtext) {
         return csv().fromString(csvtext);
     }).then(function(csv) {
         csv.forEach(function(row) {
-        main.innerHTML +='<article class="card">';
-        main.innerHTML +='<header class="card__title"><h4>Case ' + row.case + '</h4></header>';
-        main.innerHTML +='<figure class="card__thumbnail"><a href="' + row.pacsbin + '"><img src ="' + row.img + '"></a></figure>';
-        main.innerHTML +='<main class="card__description">' + row.dx + '</main>';
-        main.innerHTML +='</article>';
+        main.innerHTML +='<div class="card">';
+        main.innerHTML +='<img src ="' + row.img + '">';
+        main.innerHTML +='<div class="container">'
+        main.innerHTML +='<h4><b><a href="' + row.pacsbin + '">Case ' + row.case + '</a></b></h4></header>'
+        main.innerHTML +='<p>' + row.dx + '</p></div></div>';
         });
     });
-    main.innerHTML +='</section>';
   </script>
 </html>
