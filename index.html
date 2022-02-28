@@ -12,8 +12,11 @@
         .card {
           box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
           transition: 0.3s;
-          width: 40%;
+          margin: 50px 20px 20px 20px;
+          width: calc(33.3333% - 40px); /* 1/3 minus the margins (20+20) */
           border-radius: 5px;
+          color: white;
+          float: left;
         }
         .card:hover {
           box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
@@ -43,10 +46,9 @@
     }).then(function(csv) {
         csv.forEach(function(row) {
         main.innerHTML +='<div class="card">';
-        main.innerHTML +='<img src ="' + row.img + '">';
-        main.innerHTML +='<div class="container">'
-        main.innerHTML +='<h4><b><a href="' + row.pacsbin + '">Case ' + row.case + '</a></b></h4></header>'
-        main.innerHTML +='<p>' + row.dx + '</p></div></div>';
+        main.innerHTML +='<div class="title">Case ' + row.case + '</div>'
+        main.innerHTML +='<a href="'+ row.pacsbin +'"><img src ="' + row.img + '"></a>';
+        main.innerHTML +='<p>' + row.dx + '</p></div>';
         });
     });
   </script>
