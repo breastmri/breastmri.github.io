@@ -45,10 +45,7 @@
         return csv().fromString(csvtext);
     }).then(function(csv) {
         csv.forEach(function(row) {
-        main.innerHTML +='<div class="card">';
-        main.innerHTML +='<div class="title">Case ' + row.case + '</div>'
-        main.innerHTML +='<a href="'+ row.pacsbin +'"><img src ="' + row.img + '"></a>';
-        main.innerHTML +='<p>' + row.dx + '</p></div>';
+        main.innerHTML +='<div class="card"><div class="title">Case ' + row.case + '</div><a href="'+ row.pacsbin +'"><img src ="' + row.img + '"></a><p>' + row.dx + '</p></div>'; //dont break the div into multiple innerhtml
         });
     });
   </script>
