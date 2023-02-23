@@ -51,10 +51,11 @@
         csv.forEach(function(row) 
         {
         // Code for csv based card
-        main.innerHTML +='<div class="card"><div class="title"> Case ' + row.case + '</div>' 
+        main.innerHTML +='<div class="card">'
+        + '<div class="title"> Case ' + row.case + '</div>' 
         + '<a href="'+ row.pacsbin +'"><img src ="' + row.img + '" class="card-img-top"></a>'
-        + '<p>' + row.Indication + '</p>' 
-        + '<a href="' + row.youtube + '"><img src=yt.png style="height:1ex"></a></div>';
+        + '<p>' + row.Indication
+        + '<a href="' + row.youtube + '"><img src="yt.png" style="height:1ex"></a></p></div>';
         });
     });
   </script>
