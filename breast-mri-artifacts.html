@@ -71,6 +71,9 @@ caption { color: #888; font-size: 0.85em; margin-bottom: 6px; text-align: left; 
     <li><a href="#geodist">Geometric Distortion</a></li>
     <li><a href="#partial">Partial Volume</a></li>
     <li><a href="#implants">Implants</a></li>
+    <li><a href="#gibbs">Gibbs Ring</a></li>
+    <li><a href="#enhancement">Enhancement Artifacts</a></li>
+    <li><a href="#noise">Noise / SNR</a></li>
     <li><a href="#qc">Prevention &amp; QC</a></li>
     <li><a href="#references">References</a></li>
     <li><a href="#conclusion">Conclusion</a></li>
@@ -106,6 +109,9 @@ caption { color: #888; font-size: 0.85em; margin-bottom: 6px; text-align: left; 
     <tr><td>Chemical Shift</td><td>Fat-water frequency difference; low BW</td><td>Dark/bright bands at interfaces</td><td>Increase receiver bandwidth; fat suppression</td></tr>
     <tr><td>Geometric Distortion</td><td>Gradient nonlinearity; B0 variation</td><td>Curvilinear spatial error at periphery</td><td>Gradient correction algorithms; field map correction for EPI</td></tr>
     <tr><td>Partial Volume</td><td>Tissue folding; thick slices</td><td>Apparent signal at folds</td><td>Thinner slices; scroll adjacent slices</td></tr>
+    <tr><td>Gibbs Ring (Truncation)</td><td>k-space truncation; limited matrix size</td><td>Parallel ringing bands at high-contrast interfaces</td><td>Increase phase-encode steps; k-space filtering; zero-fill interpolation</td></tr>
+    <tr><td>Enhancement Artifact (Subtraction Error / T1 Shine-Through)</td><td>Motion misregistration; pre-existing T1-shortening</td><td>False enhancement/suppression on subtraction; persistent high signal from blood products or proteinaceous fluid</td><td>Review pre-contrast source images; motion correction; compare across time points</td></tr>
+    <tr><td>Noise / SNR (Zipper, Herringbone)</td><td>RF interference; k-space data spike/corruption</td><td>Linear banding (zipper) or crisscross pattern (herringbone) across image</td><td>Identify and eliminate RF source; RF shielding; k-space spike filtering</td></tr>
   </tbody>
 </table>
 </div>
@@ -360,6 +366,92 @@ caption { color: #888; font-size: 0.85em; margin-bottom: 6px; text-align: left; 
   </div>
 </div>
 <hr class="divider">
+<div class="text-block" id="gibbs">
+  <div class="section-header">GIBBS RING ARTIFACT (TRUNCATION ARTIFACT)</div>
+  <div class="text-content">
+<div class="key-points">
+  <h4>Key Points</h4>
+  <ul>
+    <li>Arises from Fourier truncation of finite k-space data; named for mathematician J.W. Gibbs</li>
+    <li>Appears as parallel ringing bands at high-contrast interfaces (skin-air, skin-parenchyma, implant margins)</li>
+    <li>More pronounced in the phase-encode direction when phase matrix is smaller than frequency matrix</li>
+    <li>Most visible on high-contrast sequences such as T2-weighted imaging</li>
+    <li>Fix: increase phase-encode steps; zero-fill interpolation; k-space filtering (Hamming/Hanning window)</li>
+  </ul>
+</div>
+<p>The Gibbs phenomenon arises from the mathematical properties of Fourier reconstruction. MRI acquires k-space data over a finite number of samples; when this truncated dataset is inverse-Fourier transformed, high-frequency components near sharp signal transitions are incompletely represented, producing a series of oscillating ringing bands that parallel high-contrast interfaces.</p>
+<p>In breast MRI, Gibbs ringing is most visible at sharp interfaces with large signal differences: the skin-air boundary, the skin-parenchyma interface, and the margin of silicone implants. The rings appear as thin parallel bands of alternating bright and dark signal, closely spaced near the interface and diminishing in amplitude with distance. The artifact is more pronounced in the phase-encode direction when phase matrix is smaller than frequency matrix, and is generally more visible on high-contrast sequences such as T2-weighted imaging.</p>
+<p>The artifact can be reduced by increasing the number of phase-encode steps to acquire more k-space data, at the cost of longer scan time. Zero-fill interpolation increases apparent matrix size and smooths the ringing at the expense of true spatial resolution. K-space filtering techniques (such as Hamming or Hanning windowing) taper the k-space periphery, reducing ringing while introducing mild blurring. In clinical practice, recognition of the parallel-band pattern at expected high-contrast interfaces is usually sufficient to distinguish Gibbs artifact from true pathology.</p>
+</div>
+</div>
+
+<div class="figure-block">
+  <div class="image-panel" style="background:#1a1a1a;min-height:180px;display:flex;align-items:center;justify-content:center;border-radius:4px;border:1px dashed #444;flex:0 0 380px;">
+    <span style="color:#555;font-size:0.85em;text-align:center;padding:10px;">[Figure 19 pending — Gibbs ring artifact image]</span>
+  </div>
+  <div class="caption-panel">
+    <div class="fig-label">FIGURE 19 <span class="status status-query">Gibbs Ring — Image Pending</span></div>
+    <div class="caption-text">Gibbs ringing artifact at a high-contrast tissue interface. Parallel alternating bright and dark bands parallel the interface margin, diminishing in amplitude with distance. The artifact follows the contour of the interface exactly and is present symmetrically on both sides. Recognition of this parallel-band pattern at expected anatomic boundaries — particularly the skin-air and skin-parenchyma interfaces on T2-weighted sequences — is sufficient to distinguish it from pathologic signal alteration.</div>
+  </div>
+</div>
+<hr class="divider">
+<div class="text-block" id="enhancement">
+  <div class="section-header">ENHANCEMENT ARTIFACTS: SUBTRACTION ERROR AND T1 SHINE-THROUGH</div>
+  <div class="text-content">
+<div class="key-points">
+  <h4>Key Points</h4>
+  <ul>
+    <li>Two distinct mechanisms produce false signal on subtraction images: motion misregistration and intrinsic T1 shortening</li>
+    <li>Subtraction error: bright/dark crescents at tissue boundaries from pre/post motion mismatch</li>
+    <li>T1 shine-through: blood products, proteinaceous fluid, mucinous tissue, silicone, or incompletely suppressed fat remain high on subtraction without gadolinium uptake</li>
+    <li>Key rule: review pre-contrast source images — if the focus is already bright before contrast, it is not enhancement</li>
+    <li>Fix: retrospective registration; compare source phases; T2 imaging and kinetic analysis to characterize indeterminate foci</li>
+  </ul>
+</div>
+<p>Dynamic contrast-enhanced breast MRI relies on digital subtraction of pre-contrast from post-contrast images to isolate enhancing tissue. Two distinct artifact mechanisms can produce false or misleading signal on subtraction images: subtraction misregistration (subtraction error) and T1 shine-through.</p>
+<p><strong>Subtraction Error (Motion Misregistration).</strong> Subtraction error results from motion between the pre-contrast and post-contrast acquisitions. When the two volumes are not spatially registered, tissue that moved between acquisitions leaves a residual signal difference on the subtracted image that does not represent enhancement. The artifact appears as a bright crescent or ring adjacent to a structure boundary — most commonly at the chest wall, heart margin, or skin surface — with a corresponding dark crescent on the opposite side. On more severe misregistration, entire regions can appear falsely enhanced or suppressed. When subtraction images appear suspicious, reviewing the source (non-subtracted) post-contrast images is essential to determine whether enhancement is real.</p>
+<p><strong>T1 Shine-Through.</strong> T1 shine-through occurs when a structure with intrinsically short T1 relaxation time — and therefore high signal on T1-weighted images at baseline — retains high signal on post-contrast images and appears bright on the subtraction image despite the absence of gadolinium uptake. Common causes in breast MRI include hemorrhage or blood products (methemoglobin), proteinaceous cyst fluid, mucinous tissue, fat (when fat suppression is incomplete), and silicone. Because these structures are bright on both pre- and post-contrast images, incomplete cancellation on subtraction can produce a residual high-signal focus that mimics enhancement. Recognition requires comparison of pre-contrast source images: a focus that is already bright before contrast and shows no signal increase between phases does not represent true enhancement.</p>
+</div>
+</div>
+
+<div class="figure-block">
+  <div class="image-panel" style="background:#1a1a1a;min-height:180px;display:flex;align-items:center;justify-content:center;border-radius:4px;border:1px dashed #444;flex:0 0 380px;">
+    <span style="color:#555;font-size:0.85em;text-align:center;padding:10px;">[Figure 20 pending — subtraction error / T1 shine-through image]</span>
+  </div>
+  <div class="caption-panel">
+    <div class="fig-label">FIGURE 20 <span class="status status-query">Enhancement Artifact — Image Pending</span></div>
+    <div class="caption-text">Enhancement artifact from subtraction misregistration or T1 shine-through. Review of pre-contrast source images is essential: a focus that is already bright on T1-weighted pre-contrast imaging and shows no interval signal increase between DCE phases does not represent true gadolinium enhancement, regardless of its appearance on the subtracted series.</div>
+  </div>
+</div>
+<hr class="divider">
+<div class="text-block" id="noise">
+  <div class="section-header">NOISE AND SNR ARTIFACTS: ZIPPER AND HERRINGBONE</div>
+  <div class="text-content">
+<div class="key-points">
+  <h4>Key Points</h4>
+  <ul>
+    <li>General SNR degradation reduces lesion conspicuity — particularly small enhancing foci; driven by coil configuration, voxel volume, bandwidth, and acceleration factor</li>
+    <li>Zipper artifact: fixed linear band across entire image, perpendicular to frequency-encode direction — caused by external RF interference source or faulty coil element</li>
+    <li>Herringbone artifact: crisscross zigzag across entire image — caused by a single k-space data spike from electronic transient or gradient instability</li>
+    <li>Both structured noise artifacts require engineering investigation; repeating the sequence resolves transient herringbone but not a persistent RF source</li>
+  </ul>
+</div>
+<p>Signal-to-noise ratio (SNR) in breast MRI is determined by field strength, voxel volume, acquisition bandwidth, number of signal averages, and coil configuration. Compromised SNR produces grainy, low-contrast images that reduce lesion conspicuity — particularly for small enhancing foci. Beyond general SNR degradation, two structured noise artifacts arise from specific technical failures and produce characteristic patterns that aid diagnosis.</p>
+<p><strong>Zipper Artifact.</strong> The zipper artifact appears as a discrete linear band of alternating bright and dark pixels, oriented perpendicular to the frequency-encode direction and running across the entire image. It is caused by a single-frequency radiofrequency interference source that continuously adds energy at one frequency during data acquisition. Common sources include leaks in the RF-shielded scanner room (a gap in the Faraday cage, improperly sealed door, or cable feedthrough), malfunctioning electronic equipment within the room, or a defective coil element generating internal RF emission. The distinguishing feature is its fixed spatial location — the line does not move between acquisitions and is present throughout the series. Engineering inspection of room shielding and coil integrity is the appropriate response to a persistent zipper artifact.</p>
+<p><strong>Herringbone (Crisscross) Artifact.</strong> The herringbone artifact produces a characteristic zigzag or crisscross pattern of bright and dark lines across the entire image. It results from a spike or data corruption in k-space — a single anomalously high-amplitude data point produces a sinusoidal modulation across the entire reconstructed image in both directions. Common causes include electronic transients, gradient amplifier instability, and data transmission errors between the receiver and reconstruction system. Repeating the affected sequence often resolves the artifact if the cause was a transient event; persistent herringbone requires engineering evaluation of gradient electronics and reconstruction chain integrity.</p>
+</div>
+</div>
+
+<div class="figure-block">
+  <div class="image-panel" style="background:#1a1a1a;min-height:180px;display:flex;align-items:center;justify-content:center;border-radius:4px;border:1px dashed #444;flex:0 0 380px;">
+    <span style="color:#555;font-size:0.85em;text-align:center;padding:10px;">[Figure 21 pending — zipper and/or herringbone artifact image]</span>
+  </div>
+  <div class="caption-panel">
+    <div class="fig-label">FIGURE 21 <span class="status status-query">Noise / SNR — Image Pending</span></div>
+    <div class="caption-text">Structured noise artifact. <em>Zipper:</em> a fixed linear band of alternating signal traverses the entire image perpendicular to the frequency-encode direction, reflecting continuous single-frequency RF contamination from an external source or defective coil element. <em>Herringbone:</em> a crisscross zigzag pattern across the entire image arising from a single anomalous k-space data point. Both patterns are present throughout the affected series and require engineering investigation rather than protocol adjustment.</div>
+  </div>
+</div>
+<hr class="divider">
 <div class="text-block" id="qc">
   <div class="section-header">PREVENTION AND QUALITY CONTROL</div>
   <div class="text-content">
@@ -416,9 +508,31 @@ caption { color: #888; font-size: 0.85em; margin-bottom: 6px; text-align: left; 
 <div class="text-block" id="references">
   <div class="section-header">REFERENCES</div>
   <div class="text-content">
-    <ol>
-      <li>Hargreaves BA, Worters PW, Butts Pauly K, Pauly JM, Koch KM, Gold GE. Metal-induced artifacts in MRI. <em>AJR Am J Roentgenol</em>. 2011;197(3):547-555. DOI: <a href="https://doi.org/10.2214/AJR.11.7364" target="_blank" rel="noopener">10.2214/AJR.11.7364</a>.</li>
-      <li>Del Grande F, Santini F, Herzka DA, Aro MR, Dean CW, Gold GE, Carrino JA. Fat-Suppression Techniques for 3-T MR Imaging of the Musculoskeletal System. <em>Radiographics</em>. 2014;34(1):217-233. DOI: <a href="https://doi.org/10.1148/rg.341135130" target="_blank" rel="noopener">10.1148/rg.341135130</a>.</li>
+    <ol style="font-size:0.85em;line-height:1.8;color:#bbb;">
+      <li>Hargreaves BA, Worters PW, Butts Pauly K, Pauly JM, Koch KM, Gold GE. Metal-induced artifacts in MRI. <em>AJR Am J Roentgenol</em>. 2011;197(3):547-555. <a href="https://pubmed.ncbi.nlm.nih.gov/21862795/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.2214/AJR.11.7364" target="_blank" rel="noopener">DOI</a></li>
+      <li>Del Grande F, Santini F, Herzka DA, Aro MR, Dean CW, Gold GE, Carrino JA. Fat-Suppression Techniques for 3-T MR Imaging of the Musculoskeletal System. <em>Radiographics</em>. 2014;34(1):217-233. <a href="https://pubmed.ncbi.nlm.nih.gov/24428284/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1148/rg.341135130" target="_blank" rel="noopener">DOI</a></li>
+      <li>Ojeda-Fournier H, Choe KA, Mahoney MC. Recognizing and Fixing Artifacts in Breast MR Imaging. <em>Radiographics</em>. 2004;24(5):1323-1335. <a href="https://pubmed.ncbi.nlm.nih.gov/15371620/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1148/rg.245035034" target="_blank" rel="noopener">DOI</a></li>
+      <li>Morelli JN, Runge VM, Ai F, et al. An Image-based Approach to Understanding the Physics of MR Artifacts. <em>Radiographics</em>. 2011;31(3):849-866. <a href="https://pubmed.ncbi.nlm.nih.gov/21571654/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1148/rg.313105115" target="_blank" rel="noopener">DOI</a></li>
+      <li>Graves MJ, Mitchell DG. Body MRI artifacts in clinical practice: a physicist's and radiologist's perspective. <em>J Magn Reson Imaging</em>. 2013;38(2):269-287. <a href="https://pubmed.ncbi.nlm.nih.gov/23436723/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1002/jmri.24288" target="_blank" rel="noopener">DOI</a></li>
+      <li>Macura KJ, Ouwerkerk R, Jacobs MA, Bluemke DA. Patterns of Enhancement on Breast MR Images: Interpretation and Imaging Pitfalls. <em>Radiographics</em>. 2006;26(6):1719-1734. <a href="https://pubmed.ncbi.nlm.nih.gov/17102052/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1148/rg.266065025" target="_blank" rel="noopener">DOI</a></li>
+      <li>Kuhl CK. The Current Status of Breast MR Imaging. Part I. Choice of Technique, Image Interpretation, Diagnostic Accuracy, and Transfer to Clinical Practice. <em>Radiology</em>. 2007;244(2):356-378. <a href="https://pubmed.ncbi.nlm.nih.gov/17641360/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1148/radiol.2442051620" target="_blank" rel="noopener">DOI</a></li>
+      <li>Elsamaloty H, Elzawawi MS, Mohammad S, Herial N. Increasing Accuracy of Detection of Breast Cancer with 3-T MRI. <em>AJR Am J Roentgenol</em>. 2009;192(4):1142-1148. <a href="https://pubmed.ncbi.nlm.nih.gov/19304715/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.2214/AJR.07.3971" target="_blank" rel="noopener">DOI</a></li>
+      <li>Dietrich O, Raya JG, Reeder SB, Reiser MF, Schoenberg SO. Measurement of Signal-to-Noise Ratios in MR Images: Influence of Multichannel Coils, Parallel Imaging, and Reconstruction Filters. <em>J Magn Reson Imaging</em>. 2007;26(2):375-385. <a href="https://pubmed.ncbi.nlm.nih.gov/17622966/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1002/jmri.20969" target="_blank" rel="noopener">DOI</a></li>
+      <li>Arena L, Morehouse HT, Safir J. MR Imaging Artifacts that Simulate Disease: How to Recognize and Eliminate Them. <em>Radiographics</em>. 1995;15(6):1373-1394. <a href="https://pubmed.ncbi.nlm.nih.gov/7501874/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1148/radiographics.15.6.8577963" target="_blank" rel="noopener">DOI</a></li>
+      <li>Stadler A, Schima W, Ba-Ssalamah A, Karner J, Eisenhuber E. Artifacts in Body MR Imaging: Their Appearance and How to Eliminate Them. <em>Eur Radiol</em>. 2007;17(5):1242-1255. <a href="https://pubmed.ncbi.nlm.nih.gov/17016700/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1007/s00330-006-0470-4" target="_blank" rel="noopener">DOI</a></li>
+      <li>Veraart J, Fieremans E, Jelescu IO, Knoll F, Novikov DS. Gibbs Ringing Artifact Removal Based on Local Subvoxel-Shifts. <em>Magn Reson Med</em>. 2016;76(5):1574-1581. <a href="https://pubmed.ncbi.nlm.nih.gov/26399421/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1002/mrm.26054" target="_blank" rel="noopener">DOI</a></li>
+      <li>Dixon WT. Simple Proton Spectroscopic Imaging. <em>Radiology</em>. 1984;153(1):189-194. <a href="https://pubmed.ncbi.nlm.nih.gov/6089263/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1148/radiology.153.1.6089263" target="_blank" rel="noopener">DOI</a></li>
+      <li>Gutierrez RL, DeMartini WB, Silbergeld JJ, Eby PR, Peacock S, Lehman CD. High Signal Intensity Masses on Unenhanced T1-Weighted Breast MRI: Kinetic Enhancement Characteristics and Influence on Diagnosis. <em>AJR Am J Roentgenol</em>. 2011;196(6):1388-1396. <a href="https://pubmed.ncbi.nlm.nih.gov/21606311/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.2214/AJR.10.5274" target="_blank" rel="noopener">DOI</a></li>
+      <li>Pruessmann KP, Weiger M, Scheidegger MB, Boesiger P. SENSE: Sensitivity Encoding for Fast MRI. <em>Magn Reson Med</em>. 1999;42(5):952-962. <a href="https://pubmed.ncbi.nlm.nih.gov/10542355/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1002/(SICI)1522-2594(199911)42:5%3C952::AID-MRM16%3E3.0.CO;2-S" target="_blank" rel="noopener">DOI</a></li>
+      <li>Griswold MA, Jakob PM, Heidemann RM, et al. Generalized Autocalibrating Partially Parallel Acquisitions (GRAPPA). <em>Magn Reson Med</em>. 2002;47(6):1202-1210. <a href="https://pubmed.ncbi.nlm.nih.gov/12111967/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1002/mrm.10171" target="_blank" rel="noopener">DOI</a></li>
+      <li>Veltman J, Mann R, Kok T, et al. Breast Tumor Characterization Using T2*-Weighted MR Imaging and Its Correlation with Histopathological Results. <em>Eur Radiol</em>. 2008;18(11):2623-2630. <a href="https://pubmed.ncbi.nlm.nih.gov/18470530/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1007/s00330-008-1037-1" target="_blank" rel="noopener">DOI</a></li>
+      <li>Bernstein MA, King KF, Zhou XJ. <em>Handbook of MRI Pulse Sequences</em>. Elsevier Academic Press; 2004. <a href="https://www.sciencedirect.com/book/9780120928613/handbook-of-mri-pulse-sequences" target="_blank" rel="noopener">Publisher</a></li>
+      <li>McRobbie DW, Moore EA, Graves MJ, Prince MR. <em>MRI from Picture to Proton</em>. 2nd ed. Cambridge University Press; 2006. <a href="https://www.cambridge.org/core/books/mri-from-picture-to-proton/B7EBB55C6A6D22ECAD4FAE6D77D9F5C9" target="_blank" rel="noopener">Publisher</a></li>
+      <li>Westbrook C, Roth CK, Talbot J. <em>MRI in Practice</em>. 4th ed. Wiley-Blackwell; 2011. <a href="https://www.wiley.com/en-us/MRI+in+Practice%2C+4th+Edition-p-9781444337181" target="_blank" rel="noopener">Publisher</a></li>
+      <li>Rahbar H, Partridge SC, DeMartini WB, Gutierrez RL, Peacock S, Lehman CD. Clinical and Imaging Predictors of Preoperative Axillary Ultrasound in Newly Diagnosed Breast Cancer. <em>Br J Radiol</em>. 2012;85(1016):1036-1041. <a href="https://pubmed.ncbi.nlm.nih.gov/22422381/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1259/bjr/29105371" target="_blank" rel="noopener">DOI</a></li>
+      <li>Nael K, Krishnam M, Nael A, Ton A, Ruehm SG, Laub G, Finn JP. Peripheral Contrast-Enhanced MR Angiography at 3T: Improved Spatial Resolution and Broader Coverage with High Acceleration Parallel Imaging. <em>Eur Radiol</em>. 2007;17(12):3093-3101. <a href="https://pubmed.ncbi.nlm.nih.gov/17639401/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1007/s00330-007-0708-z" target="_blank" rel="noopener">DOI</a></li>
+      <li>Mann RM, Kuhl CK, Moy L. Contrast-Enhanced MRI for Breast Cancer Screening. <em>J Magn Reson Imaging</em>. 2019;50(2):377-390. <a href="https://pubmed.ncbi.nlm.nih.gov/30659696/" target="_blank" rel="noopener">PubMed</a> | <a href="https://doi.org/10.1002/jmri.26654" target="_blank" rel="noopener">DOI</a></li>
+      <li>Schoenberg SO, Dietrich O, Reiser MF, eds. <em>Parallel Imaging in Clinical MR Applications</em>. Springer; 2007. <a href="https://doi.org/10.1007/978-3-540-68879-2" target="_blank" rel="noopener">DOI</a></li>
     </ol>
   </div>
 </div>
@@ -426,12 +540,120 @@ caption { color: #888; font-size: 0.85em; margin-bottom: 6px; text-align: left; 
 <div class="text-block" id="conclusion">
   <div class="section-header">CONCLUSION</div>
   <div class="text-content">
-<p>Artifacts in breast MRI are pervasive and multifactorial, arising from field inhomogeneity, incomplete fat suppression, metallic hardware, motion, aliasing, partial volume effects, and other technical factors. These artifacts alter signal behavior, spatial fidelity, and enhancement conspicuity. Because artifacts change image appearance in predictable ways, understanding their physics-based origins supports consistent recognition and troubleshooting.</p>
-<p>Modern MRI systems and protocol standardization enable substantial artifact mitigation when properly applied. Radiologists and technologists must work collaboratively to recognize artifacts promptly, troubleshoot root causes, and adopt standardized acquisition and quality-assurance workflows.</p>
+<p>Artifacts in breast MRI are pervasive and multifactorial, arising from field inhomogeneity, incomplete fat suppression, metallic hardware, motion, aliasing, chemical shift, geometric distortion, partial volume effects, Gibbs ringing, enhancement misregistration, T1 shine-through, and structured noise patterns. These artifacts alter signal behavior, spatial fidelity, and enhancement conspicuity in ways that can simulate or obscure pathology. Because artifacts change image appearance in predictable, physics-based ways, understanding their origins supports consistent recognition and troubleshooting.</p>
+<p>Modern MRI systems and protocol standardization enable substantial artifact mitigation when properly applied. Radiologists and technologists must work collaboratively to recognize artifacts promptly, troubleshoot root causes, and adopt standardized acquisition and quality-assurance workflows. Importantly, no single mitigation strategy is universally applicable — effective artifact management requires matching the solution to the underlying cause and accepting that corrective measures often involve trade-offs among SNR, spatial resolution, and scan time.</p>
 </div>
 </div>
 
-<p style="text-align:center; color:#555; font-size:0.8em; margin-top:40px;"><em>Last updated: March 9, 2026 10:10 AM PT</em></p>
+<p style="text-align:center; color:#555; font-size:0.8em; margin-top:40px;"><em>Last updated: March 18, 2026</em></p>
+<style>
+  .para-note-btn {
+    display: inline-block; margin-left: 8px; padding: 1px 7px;
+    font-size: 0.72em; border-radius: 10px; cursor: pointer;
+    background: #1e2a35; color: #4a90b8; border: 1px solid #2a4a5a;
+    vertical-align: middle; font-family: inherit; opacity: 0.6;
+    transition: opacity .15s;
+  }
+  .para-note-btn:hover, .para-note-btn.has-draft { opacity: 1; }
+  .para-note-btn.has-draft { color: #7eb8d4; border-color: #4a90b8; font-weight: 600; }
+  .para-note-panel {
+    display: none; margin: 4px 0 10px 0; background: #1a2a35;
+    border-left: 3px solid #4a90b8; padding: 8px 12px; border-radius: 0 4px 4px 0;
+  }
+  .para-note-panel textarea {
+    width: 100%; min-height: 60px; background: #0f1a22; color: #ccc;
+    border: 1px solid #2a4a5a; border-radius: 4px; padding: 6px 8px;
+    font-size: 0.85em; font-family: inherit; resize: vertical; box-sizing: border-box;
+  }
+  .para-note-panel textarea:focus { border-color: #4a90b8; outline: none; }
+  .para-note-actions { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+  .para-note-submit {
+    padding: 3px 12px; background: #2a5a7a; color: #e0f0ff; border: none;
+    border-radius: 4px; cursor: pointer; font-size: 0.82em; font-family: inherit;
+  }
+  .para-note-submit:hover { background: #3a6a8a; }
+  .para-note-submit:disabled { background: #1a3a4a; color: #6a8a9a; cursor: default; }
+  .para-note-status { font-size: 0.78em; color: #64748b; }
+  .para-note-status.ok { color: #4ade80; }
+  .para-note-status.err { color: #f87171; }
+</style>
+<script>
+  const PAGE_ID = 'artifacts';
+
+  window.reviewPageInit = function(reviewer) {
+    const API_URL = 'https://2tu79n9lw0.execute-api.us-east-1.amazonaws.com/comment';
+
+    // Add note buttons to all paragraphs and caption text in text-content areas
+    const targets = document.querySelectorAll('.text-content p, .caption-text');
+    targets.forEach(function(el, idx) {
+      const id = 'p_' + idx + '_' + (el.textContent.trim().slice(0, 20).replace(/\W+/g,'_'));
+      const draftKey = 'draft_' + PAGE_ID + '_' + id;
+
+      const btn = document.createElement('button');
+      btn.className = 'para-note-btn';
+      btn.textContent = '+ note';
+      const saved = localStorage.getItem(draftKey);
+      if (saved) { btn.classList.add('has-draft'); btn.textContent = '+ note (draft)'; }
+      el.appendChild(btn);
+
+      const panel = document.createElement('div');
+      panel.className = 'para-note-panel';
+      panel.innerHTML =
+        '<textarea placeholder="Note on this paragraph..."></textarea>' +
+        '<div class="para-note-actions">' +
+          '<button class="para-note-submit">Submit</button>' +
+          '<span class="para-note-status"></span>' +
+        '</div>';
+      el.after(panel);
+
+      const ta     = panel.querySelector('textarea');
+      const submit = panel.querySelector('.para-note-submit');
+      const status = panel.querySelector('.para-note-status');
+      if (saved) ta.value = saved;
+
+      ta.addEventListener('input', function() {
+        const v = ta.value.trim();
+        localStorage.setItem(draftKey, ta.value);
+        btn.classList.toggle('has-draft', !!v);
+        btn.textContent = v ? '+ note (draft)' : '+ note';
+      });
+
+      btn.addEventListener('click', function() {
+        const open = panel.style.display === 'block';
+        panel.style.display = open ? 'none' : 'block';
+        if (!open) ta.focus();
+      });
+
+      submit.addEventListener('click', async function() {
+        const text = ta.value.trim();
+        if (!text) return;
+        submit.disabled = true;
+        status.textContent = 'Saving...';
+        status.className = 'para-note-status';
+        try {
+          const resp = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reviewer, section: id, text, page: PAGE_ID, ts: new Date().toISOString() }),
+          });
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          status.textContent = 'Saved!';
+          status.className = 'para-note-status ok';
+          ta.value = '';
+          localStorage.removeItem(draftKey);
+          btn.classList.remove('has-draft');
+          btn.textContent = '+ note';
+          setTimeout(function() { panel.style.display = 'none'; status.textContent = ''; }, 1800);
+        } catch(e) {
+          status.textContent = 'Error — check console.';
+          status.className = 'para-note-status err';
+        } finally {
+          submit.disabled = false;
+        }
+      });
+    });
+  };
+</script>
 <script src="review-system.js"></script></body>
 </html>
 

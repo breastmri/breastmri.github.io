@@ -247,6 +247,11 @@
       }
     });
     document.body.appendChild(badge);
+
+    // Page-level extension hook — define window.reviewPageInit(reviewer) on the page to run custom logic after auth
+    if (typeof window.reviewPageInit === 'function') {
+      window.reviewPageInit(reviewer);
+    }
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────
