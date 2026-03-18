@@ -1,62 +1,149 @@
-<!doctype html>
-<html lang="en-us">
-  
-  <head>
-    <title>Breast MRI</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="mobile-web-app-capable" content="yes">
-    <script src="https://cdn.rawgit.com/Keyang/node-csvtojson/d41f44aa/browser/csvtojson.min.js"></script>
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Breast MRI Research Navigation</title>
+  <style>
+    :root {
+      --bg: #f3f7fb;
+      --panel: #ffffff;
+      --text: #102338;
+      --muted: #5a7088;
+      --line: #cfdbe8;
+      --accent: #0d5fb8;
+      --accent-2: #0f766e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 0% 0%, #d6e7f7 0%, transparent 45%),
+        radial-gradient(circle at 100% 100%, #d5f5ef 0%, transparent 40%),
+        var(--bg);
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+    .wrap {
+      width: min(960px, 100%);
+      background: rgba(255,255,255,0.86);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(2px);
+      box-shadow: 0 20px 60px rgba(16, 35, 56, 0.08);
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+      letter-spacing: 0.01em;
+    }
+    p.lead {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+    .tag {
+      display: inline-block;
+      width: fit-content;
+      font-size: 11px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: white;
+      background: var(--accent);
+      border-radius: 999px;
+      padding: 3px 8px;
+    }
+    .tag.alt { background: var(--accent-2); }
+    .title {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.3;
+    }
+    .meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+      min-height: 2.9em;
+    }
+    a.btn {
+      text-decoration: none;
+      color: white;
+      background: var(--accent);
+      border-radius: 8px;
+      padding: 8px 10px;
+      width: fit-content;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: transform 120ms ease, filter 120ms ease;
+    }
+    a.btn.alt { background: var(--accent-2); }
+    a.btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+    }
+    .sub {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Breast MRI Research Navigation</h1>
+    <p class="lead">Single entry page for the current teaching index, artifacts analysis work, and MG CNN+Transformer reporting outputs.</p>
 
-    <style>
-        .card {
-          box-shadow: 0 1px 5px 0 rgba(0,0,0,0.2);
-          transition: 0.3s;
-          margin: 50px 20px 20px 20px;
-          width: calc(33.3333% - 40px); /* 1/3 minus the margins (20+20) */
-          border-radius: 5px;
-          float: left;
-        }
-        .card:hover {
-          box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-        }
-        img {
-          border-radius: 5px 5px 0 0;
-          max-width: 100%;
-        }
-        .card-img-top {
-            width: 100%;
-            object-fit: cover;
-        }
-        .container {
-          padding: 2px 16px;
-        }
-        </style>
-  </head>
-  
-  <body>
-    <h1>Breast MRI</h1>
-    <main>
-    </main>
-  </body>
-  
-  <script>
-    const url = "https://docs.google.com/spreadsheets/d/1etlVrxXM18TMqmfJoKsc2nhfb-5ax92fJ5XPv6L_L8U/export?format=csv"
-    const main = document.querySelector("main")
+    <section class="grid">
+      <article class="card">
+        <span class="tag">Original</span>
+        <h2 class="title">Breast MRI Teaching Cases</h2>
+        <p class="meta">Legacy Google Sheet-driven case gallery (kept public at <code>old-index.html</code>).</p>
+        <a class="btn" href="old-index.html">Open Original Index</a>
+      </article>
 
-    // fetch gs data -> csv
-    fetch(url).then(result=>result.text()).then(function(csvtext) {
-        return csv().fromString(csvtext);
-        }).then(function(csv) {
-        csv.forEach(function(row) 
-        {
-        // Code for csv based card
-        main.innerHTML +='<div class="card">'
-        + '<div class="title"><a href="'+ row.pacsbin +'"> Case ' + row.case + '</a></div>' 
-        + '<img src ="' + row.img + '" class="card-img-top">'
-        + '<p>' + row.Indication + "</p>"
-        + '<p><a href="' + row.youtube + '">Video Instruction</a></p></div>';
-        });
-    });
-  </script>
+      <article class="card">
+        <span class="tag alt">Paper</span>
+        <h2 class="title">Artifacts Analysis</h2>
+        <p class="meta">Landing page for the artifacts paper and associated analysis content.</p>
+        <a class="btn alt" href="breast-mri-artifacts.html">Open Artifacts Page</a>
+      </article>
+
+      <article class="card">
+        <span class="tag">Results</span>
+        <h2 class="title">MG Risk Report (CNN + Transformer)</h2>
+        <p class="meta">Run: <code>02251908_viewtx_joint-aux025-coslr-examdx-freeze10</code> (static HTML snapshot).</p>
+        <a class="btn" href="reports/mg_02251908_viewtx_joint-aux025-coslr-examdx-freeze10_report.html">Open MG Report</a>
+      </article>
+
+      <article class="card">
+        <span class="tag">Manuscript</span>
+        <h2 class="title">MG Manuscript Draft</h2>
+        <p class="meta">Draft manuscript snapshot with reviewer comments enabled.</p>
+        <a class="btn" href="reports/mg_manuscript_02251908_draft.html">Open Manuscript</a>
+      </article>
+    </section>
+
+    <p class="sub">Tip: keep this page at a stable URL like <code>/nav.html</code>; add future report links here as new runs are published.</p>
+  </main>
+<script src="review-system.js"></script>
+</body>
 </html>

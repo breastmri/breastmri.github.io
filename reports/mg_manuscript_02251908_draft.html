@@ -272,5 +272,21 @@ Age is image-level (mean across all images); manufacturer and follow-up N refer 
   &middot; Generated 2026-03-10 11:57 &middot;
   Figures from <code>\\data2.einsteinmed.edu\users\Michael Liu\data\mammo\results\02251908_viewtx_joint-aux025-coslr-examdx-freeze10</code>
 </div>
-<script src="../review-system.js"></script>
+<script>
+(function () {
+  var paths = ['../review-system.js', './review-system.js', '/review-system.js'];
+  var idx = 0;
+  function loadNext() {
+    if (idx >= paths.length) {
+      console.warn('[review] review-system.js not found in expected paths.');
+      return;
+    }
+    var s = document.createElement('script');
+    s.src = paths[idx++];
+    s.onerror = loadNext;
+    document.body.appendChild(s);
+  }
+  loadNext();
+})();
+</script>
 </body></html>
