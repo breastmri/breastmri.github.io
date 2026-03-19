@@ -1,4 +1,4 @@
-Artifacts In Breast MRI And Troubleshooting Strategies
+﻿Artifacts In Breast MRI And Troubleshooting Strategies
 A practical guide to recognition, characterization, and mitigation
 
 INTRODUCTION
@@ -50,6 +50,18 @@ Partial Volume
 Tissue folding; thick slices
 Apparent signal at folds
 Thinner slices; scroll adjacent slices
+Gibbs Ring (Truncation)
+k-space truncation; limited matrix size
+Parallel ringing bands at high-contrast interfaces
+Increase phase-encode steps; k-space filtering; zero-fill interpolation
+Enhancement Artifact (Subtraction Error / T1 Shine-Through)
+Motion misregistration; pre-existing T1-shortening
+False enhancement/suppression on subtraction; persistent high signal from blood products or proteinaceous fluid
+Review pre-contrast source images; motion correction; compare across time points
+Noise / SNR (Zipper, Herringbone)
+RF interference; k-space data spike/corruption
+Linear banding (zipper) or crisscross pattern (herringbone) across image
+Identify and eliminate RF source; RF shielding; k-space spike filtering
 
 
 
@@ -188,6 +200,34 @@ FIGURE 18 Implants
 
 Implant-related artifact. Axial T1-weighted image in a patient with silicone implants demonstrates susceptibility-related signal changes and geometric distortion at the implant margins.
 
+GIBBS RING ARTIFACT (TRUNCATION ARTIFACT)
+
+The Gibbs phenomenon arises from the mathematical properties of Fourier reconstruction. MRI acquires k-space data over a finite number of samples; when this truncated dataset is inverse-Fourier transformed, high-frequency components near sharp signal transitions are incompletely represented, producing a series of oscillating ringing bands that parallel high-contrast interfaces. The artifact is named for the mathematician J.W. Gibbs, who described this property of Fourier series in the context of signal discontinuities.
+In breast MRI, Gibbs ringing is most visible at sharp interfaces with large signal differences: the skin-air boundary, the skin-parenchyma interface, and the margin of silicone implants. The rings appear as thin parallel bands of alternating bright and dark signal, closely spaced near the interface and diminishing in amplitude with distance. The artifact is more pronounced in the phase-encode direction when phase matrix is smaller than frequency matrix, and is generally more visible on high-contrast sequences such as T2-weighted imaging.
+The artifact can be reduced by increasing the number of phase-encode steps to acquire more k-space data, at the cost of longer scan time. Zero-fill interpolation (filling k-space edges with zeros before reconstruction) increases apparent matrix size and smooths the ringing at the expense of true spatial resolution. K-space filtering techniques (such as Hamming or Hanning windowing) taper the k-space periphery, reducing ringing while introducing mild blurring. In clinical practice, recognition of the parallel-band pattern at expected high-contrast interfaces is usually sufficient to distinguish Gibbs artifact from true pathology.
+
+[TODO: Insert teaching case image â€” unknown artifact from breastmri.org case. Please share image so this figure can be completed.]
+
+ENHANCEMENT ARTIFACTS: SUBTRACTION ERROR AND T1 SHINE-THROUGH
+
+Dynamic contrast-enhanced breast MRI relies on digital subtraction of pre-contrast from post-contrast images to isolate enhancing tissue. Two distinct artifact mechanisms can produce false or misleading signal on subtraction images: subtraction misregistration (subtraction error) and T1 shine-through.
+
+Subtraction Error (Motion Misregistration)
+Subtraction error results from motion between the pre-contrast and post-contrast acquisitions. When the two volumes are not spatially registered, tissue that moved between acquisitions leaves a residual signal difference on the subtracted image that does not represent enhancement. The subtraction artifact appears as a bright crescent or ring adjacent to a structure boundary â€” most commonly at the chest wall, heart margin, or skin surface â€” with a corresponding dark crescent on the opposite side. On more severe misregistration, entire regions of enhancing tissue can be suppressed or false enhancement can be introduced in areas with no underlying pathology. DCE series with high temporal resolution are less susceptible because the shorter acquisition window limits motion between phases. Retrospective rigid or deformable registration algorithms can reduce but not always eliminate this artifact. When subtraction images appear suspicious, reviewing the source (non-subtracted) post-contrast images is essential to determine whether enhancement is real.
+
+T1 Shine-Through
+T1 shine-through occurs when a structure with intrinsically short T1 relaxation time â€” and therefore high signal on T1-weighted images at baseline â€” retains high signal on post-contrast images and appears bright on the subtraction image despite the absence of gadolinium uptake. Common causes in breast MRI include hemorrhage or blood products (methemoglobin), proteinaceous cyst fluid, mucinous tissue, fat (when fat suppression is incomplete), and silicone. Because these structures are bright on both pre- and post-contrast images, incomplete cancellation on subtraction can produce a residual high-signal focus that mimics enhancement. Recognition requires comparison of pre-contrast source images: a focus that is already bright before contrast on T1-weighted images and shows no signal increase between phases does not represent true enhancement. T2-weighted imaging and kinetic analysis can help characterize indeterminate findings.
+
+NOISE AND SNR ARTIFACTS: ZIPPER AND HERRINGBONE
+
+Signal-to-noise ratio (SNR) in breast MRI is determined by field strength, voxel volume, acquisition bandwidth, number of signal averages, and coil configuration. Compromised SNR produces grainy, low-contrast images that reduce lesion conspicuity â€” particularly for small enhancing foci. Beyond general SNR degradation, two structured noise artifacts arise from specific technical failures and produce characteristic patterns.
+
+Zipper Artifact
+The zipper artifact appears as a discrete linear band of alternating bright and dark pixels, oriented perpendicular to the frequency-encode direction and running across the entire image in the phase-encode direction. It is caused by a single-frequency radiofrequency interference source that continuously adds energy at one frequency during data acquisition. Common sources include leaks in the RF-shielded scanner room (a gap in the Faraday cage, an improperly sealed door, or a cable feedthrough), malfunctioning electronic equipment within the room, or a defective coil element generating internal RF emission. The distinguishing feature is its fixed spatial location â€” the line does not move between acquisitions and is present throughout the series. Diagnosis is confirmed by identifying and eliminating the RF source. Engineering inspection of room shielding and coil integrity is the appropriate response to a persistent zipper artifact that cannot be resolved by repositioning equipment.
+
+Herringbone (Crisscross) Artifact
+The herringbone artifact, also called the crisscross artifact, produces a characteristic zigzag or crisscross pattern of bright and dark lines across the entire image. It results from corruption or a spike in k-space data â€” a single anomalously high-amplitude data point in k-space produces a sinusoidal modulation across the entire reconstructed image in both directions, creating the intersecting diagonal lines. Common causes include electronic transients, gradient amplifier instability, and data transmission errors between the receiver and reconstruction system. Unlike the zipper artifact, the herringbone pattern typically affects the entire image in both directions. Automatic k-space spike detection and filtering algorithms can identify and exclude corrupted data points. Repeating the affected sequence often resolves the artifact if the cause was a transient event; persistent herringbone requires engineering evaluation of gradient electronics and reconstruction chain integrity.
+
 PREVENTION AND QUALITY CONTROL
 
 Artifact prevention is most effective when treated as a standardized workflow rather than ad hoc troubleshooting. The goal is to detect fixable quality issues early, before contrast injection and before the patient leaves the scanner.
@@ -225,10 +265,49 @@ Use periodic team review of nondiagnostic exams to update local artifact-prevent
 
 CONCLUSION
 
-Artifacts in breast MRI are pervasive and multifactorial, arising from field inhomogeneity, incomplete fat suppression, metallic hardware, motion, aliasing, partial volume effects, and other technical factors. These artifacts alter signal behavior, spatial fidelity, and enhancement conspicuity. Because artifacts change image appearance in predictable ways, understanding their physics-based origins supports consistent recognition and troubleshooting.
-Modern MRI systems and protocol standardization enable substantial artifact mitigation when properly applied. Radiologists and technologists must work collaboratively to recognize artifacts promptly, troubleshoot root causes, and adopt standardized acquisition and quality-assurance workflows.
+Artifacts in breast MRI are pervasive and multifactorial, arising from field inhomogeneity, incomplete fat suppression, metallic hardware, motion, aliasing, chemical shift, geometric distortion, partial volume effects, Gibbs ringing, enhancement misregistration, T1 shine-through, and structured noise patterns. These artifacts alter signal behavior, spatial fidelity, and enhancement conspicuity in ways that can simulate or obscure pathology. Because artifacts change image appearance in predictable, physics-based ways, understanding their origins supports consistent recognition and troubleshooting.
+Modern MRI systems and protocol standardization enable substantial artifact mitigation when properly applied. Radiologists and technologists must work collaboratively to recognize artifacts promptly, troubleshoot root causes, and adopt standardized acquisition and quality-assurance workflows. Importantly, no single mitigation strategy is universally applicable â€” effective artifact management requires matching the solution to the underlying cause and accepting that corrective measures often involve trade-offs among SNR, spatial resolution, and scan time.
 REFERENCES
 
-Hargreaves BA, Worters PW, Butts Pauly K, Pauly JM, Koch KM, Gold GE. Metal-induced artifacts in MRI. AJR Am J Roentgenol. 2011;197(3):547-555. DOI: 10.2214/AJR.11.7364.
+1. Hargreaves BA, Worters PW, Butts Pauly K, Pauly JM, Koch KM, Gold GE. Metal-induced artifacts in MRI. AJR Am J Roentgenol. 2011;197(3):547-555. DOI: 10.2214/AJR.11.7364.
 
-Del Grande F, Santini F, Herzka DA, Aro MR, Dean CW, Gold GE, Carrino JA. Fat-Suppression Techniques for 3-T MR Imaging of the Musculoskeletal System. Radiographics. 2014;34(1):217-233. DOI: 10.1148/rg.341135130.
+2. Del Grande F, Santini F, Herzka DA, Aro MR, Dean CW, Gold GE, Carrino JA. Fat-Suppression Techniques for 3-T MR Imaging of the Musculoskeletal System. Radiographics. 2014;34(1):217-233. DOI: 10.1148/rg.341135130.
+
+3. Ojeda-Fournier H, Choe KA, Mahoney MC. Recognizing and Fixing Artifacts in Breast MR Imaging. Radiographics. 2004;24(5):1323-1335. DOI: 10.1148/rg.245035034.
+
+4. Morelli JN, Runge VM, Ai F, Attenberger U, Vu L, Schmeets SH, Nitz WR, Kirsch JE. An Image-based Approach to Understanding the Physics of MR Artifacts. Radiographics. 2011;31(3):849-866. DOI: 10.1148/rg.313105115.
+
+5. Graves MJ, Mitchell DG. Body MRI artifacts in clinical practice: a physicist's and radiologist's perspective. J Magn Reson Imaging. 2013;38(2):269-287. DOI: 10.1002/jmri.24288.
+
+6. Macura KJ, Ouwerkerk R, Jacobs MA, Bluemke DA. Patterns of Enhancement on Breast MR Images: Interpretation and Imaging Pitfalls. Radiographics. 2006;26(6):1719-1734. DOI: 10.1148/rg.266065025.
+
+7. Kuhl CK. The Current Status of Breast MR Imaging. Part I. Choice of Technique, Image Interpretation, Diagnostic Accuracy, and Transfer to Clinical Practice. Radiology. 2007;244(2):356-378. DOI: 10.1148/radiol.2442051620.
+
+
+8. Dietrich O, Raya JG, Reeder SB, Reiser MF, Schoenberg SO. Measurement of Signal-to-Noise Ratios in MR Images: Influence of Multichannel Coils, Parallel Imaging, and Reconstruction Filters. J Magn Reson Imaging. 2007;26(2):375-385. DOI: 10.1002/jmri.20969.
+
+9. Arena L, Morehouse HT, Safir J. MR Imaging Artifacts that Simulate Disease: How to Recognize and Eliminate Them. Radiographics. 1995;15(6):1373-1394. DOI: 10.1148/radiographics.15.6.8577963.
+
+10. Stadler A, Schima W, Ba-Ssalamah A, Karner J, Eisenhuber E. Artifacts in Body MR Imaging: Their Appearance and How to Eliminate Them. Eur Radiol. 2007;17(5):1242-1255. DOI: 10.1007/s00330-006-0470-4.
+
+11. Veraart J, Fieremans E, Jelescu IO, Knoll F, Novikov DS. Gibbs Ringing Artifact Removal Based on Local Subvoxel-Shifts. Magn Reson Med. 2016;76(5):1574-1581. DOI: 10.1002/mrm.26054.
+
+12. Dixon WT. Simple Proton Spectroscopic Imaging. Radiology. 1984;153(1):189-194. DOI: 10.1148/radiology.153.1.6089263.
+
+13. Bolan PJ, Nelson MT, Yee D, Garwood M. Imaging in Breast Cancer: Magnetic Resonance Spectroscopy. Breast Cancer Res. 2005;7(4):149-152. DOI: 10.1186/bcr1202.
+
+14. Pruessmann KP, Weiger M, Scheidegger MB, Boesiger P. SENSE: Sensitivity Encoding for Fast MRI. Magn Reson Med. 1999;42(5):952-962. DOI: 10.1002/(SICI)1522-2594(199911)42:5<952::AID-MRM16>3.0.CO;2-S.
+
+15. Griswold MA, Jakob PM, Heidemann RM, Nittka M, Jellus V, Wang J, Kiefer B, Haase A. Generalized Autocalibrating Partially Parallel Acquisitions (GRAPPA). Magn Reson Med. 2002;47(6):1202-1210. DOI: 10.1002/mrm.10171.
+
+16. Bernstein MA, King KF, Zhou XJ. Handbook of MRI Pulse Sequences. Elsevier Academic Press; 2004.
+
+17. McRobbie DW, Moore EA, Graves MJ, Prince MR. MRI from Picture to Proton. 2nd ed. Cambridge University Press; 2006.
+
+
+
+20. Gutierrez RL, DeMartini WB, Silbergeld JJ, Eby PR, Peacock S, Lehman CD. High Signal Intensity Masses on Unenhanced T1-Weighted Breast MRI: Kinetic Enhancement Characteristics and Influence on Diagnosis. AJR Am J Roentgenol. 2011;196(6):1388-1396. DOI: 10.2214/AJR.10.5274.
+
+
+
+23. Schoenberg SO, Dietrich O, Reiser MF, eds. Parallel Imaging in Clinical MR Applications. Springer; 2007.
