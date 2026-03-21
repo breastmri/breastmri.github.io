@@ -9,13 +9,8 @@
 
 (function () {
   // ── Configuration ────────────────────────────────────────────────────────
-  const REVIEWERS = {
-    'c1968554511202df97e3cd7577772e6e329fb28d150c2474395a37e595fdde13': 'richard',  // richardreview
-    '94db3b5c7906d110d83ab5a64b567d7e1a942c1050118c55b1277953b101bee5': 'tim',       // timreview
-    'c64e839a14cddd55ea64a5912aba1c6518eb42abca77beb8abb0c81460ad8d3b': 'sachin',   // sachinreview
-    'b8ef69ad52755883952749fb3416642283d6313bd58738711bbdea3d347538a9': 'mike',      // miketest
-    // Add more: python -c "import hashlib; print(hashlib.sha256(b'PASSWORD').hexdigest())"
-  };
+  // Passwords are loaded from review-passwords.js (gitignored). See review-passwords.example.js.
+  const REVIEWERS = window.REVIEW_PASSWORDS || {};
 
   const API_URL = 'https://2tu79n9lw0.execute-api.us-east-1.amazonaws.com/comment';
 
