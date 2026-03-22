@@ -1,10 +1,6 @@
 /**
  * review-system.js
  * Password-gated collaborative annotation layer for MG reports.
- *
- * Configure:
- *   REVIEWERS   - map of SHA-256(password) -> reviewer_name
- *   API_URL     - API Gateway endpoint (POST /comment)
  */
 
 (function () {
@@ -16,20 +12,16 @@
     'b8ef69ad52755883952749fb3416642283d6313bd58738711bbdea3d347538a9': 'mike',
   };
 
-  const API_URL = 'https://2tu79n9lw0.execute-api.us-east-1.amazonaws.com/comment';
-
+  const API_URL     = 'https://2tu79n9lw0.execute-api.us-east-1.amazonaws.com/comment';
   const SESSION_KEY = 'mg_reviewer';
   // ─────────────────────────────────────────────────────────────────────────
 
   const PAGE_ID = (document.title || 'report').replace(/[^a-z0-9_-]/gi, '_').slice(0, 60);
 
-  // ── Utilities ─────────────────────────────────────────────────────────────
   async function sha256(str) {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
-
-  function getReviewer() { return sessionStorage.getItem(SESSION_KEY); }
 
   function slugify(text) {
     return text.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').slice(0, 40);
@@ -63,9 +55,7 @@
   }
   .gate-box button:hover { background: #1d4ed8; }
   #gate-err { margin-top: 10px; color: #dc2626; font-size: 0.82rem; min-height: 1.2em; }
-  .gate-reviewer { margin-top: 8px; font-size: 0.8rem; color: #64748b; text-align: right; }
 
-  /* Comment widgets */
   h2 { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .comment-toggle {
     flex-shrink: 0; background: none; border: 1.5px solid #c7d2fe;
@@ -97,10 +87,9 @@
   .comment-submit:hover { background: #4f46e5; }
   .comment-submit:disabled { background: #a5b4fc; cursor: default; }
   .comment-status { font-size: 0.8rem; color: #64748b; }
-  .comment-status.ok   { color: #16a34a; }
-  .comment-status.err  { color: #dc2626; }
+  .comment-status.ok  { color: #16a34a; }
+  .comment-status.err { color: #dc2626; }
 
-  /* Reviewer badge */
   #review-badge {
     position: fixed; bottom: 16px; right: 16px;
     background: #1e1b4b; color: #c7d2fe; border-radius: 99px;
@@ -136,6 +125,10 @@
     async function tryUnlock() {
       const pwd = document.getElementById('gate-pwd').value;
       if (!pwd) return;
+      const btn = document.getElementById('gate-btn');
+      const err = document.getElementById('gate-err');
+      btn.disabled = true;
+      err.textContent = '';
       const hash = await sha256(pwd);
       const reviewer = REVIEWERS[hash];
       if (reviewer) {
@@ -144,8 +137,9 @@
         document.body.style.overflow = '';
         injectCommentWidgets(reviewer);
       } else {
-        document.getElementById('gate-err').textContent = 'Invalid password. Try again.';
+        err.textContent = 'Invalid password. Try again.';
         document.getElementById('gate-pwd').select();
+        btn.disabled = false;
       }
     }
 
@@ -154,15 +148,11 @@
   }
 
   // ── Comment widgets ───────────────────────────────────────────────────────
-  async function postComment(payload) {
-    if (API_URL === 'PASTE_API_GATEWAY_URL_HERE') {
-      console.warn('[review] API_URL not configured — comment not saved:', payload);
-      return;
-    }
+  async function postComment(reviewer, payload) {
     const resp = await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ reviewer, ...payload }),
     });
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
   }
@@ -173,7 +163,6 @@
       const sectionId = `s${idx}_${slugify(rawText)}`;
       const draftKey  = `draft_${PAGE_ID}_${sectionId}`;
 
-      // Toggle button
       const btn = document.createElement('button');
       btn.className = 'comment-toggle';
       btn.textContent = '+ note';
@@ -181,7 +170,6 @@
       if (saved) { btn.classList.add('has-draft'); btn.textContent = '+ note (draft)'; }
       h2.appendChild(btn);
 
-      // Panel
       const panel = document.createElement('div');
       panel.className = 'comment-panel';
       panel.innerHTML = `
@@ -218,7 +206,7 @@
         status.textContent = 'Saving...';
         status.className = 'comment-status';
         try {
-          await postComment({ reviewer, section: sectionId, text, page: PAGE_ID, ts: new Date().toISOString() });
+          await postComment(reviewer, { section: sectionId, text, page: PAGE_ID, ts: new Date().toISOString() });
           status.textContent = 'Saved!';
           status.className = 'comment-status ok';
           ta.value = '';
@@ -235,7 +223,6 @@
       });
     });
 
-    // Reviewer badge (click to sign out)
     const badge = document.createElement('div');
     badge.id = 'review-badge';
     badge.textContent = `Reviewing as ${reviewer} — sign out`;
@@ -247,21 +234,16 @@
     });
     document.body.appendChild(badge);
 
-    // Page-level extension hook — define window.reviewPageInit(reviewer) on the page to run custom logic after auth
-    if (typeof window.reviewPageInit === 'function') {
-      window.reviewPageInit(reviewer);
-    }
+    if (typeof window.reviewPageInit === 'function') window.reviewPageInit(reviewer);
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────
   function init() {
     injectStyles();
-    const reviewer = getReviewer();
-    if (reviewer && REVIEWERS[Object.keys(REVIEWERS).find(h => REVIEWERS[h] === reviewer) || '']) {
+    const reviewer = sessionStorage.getItem(SESSION_KEY);
+    if (reviewer) {
       injectCommentWidgets(reviewer);
     } else {
-      // Reviewer in session but password no longer valid? re-gate.
-      sessionStorage.removeItem(SESSION_KEY);
       showGate();
     }
   }
