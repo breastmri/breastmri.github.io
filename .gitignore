@@ -3,4 +3,11 @@ csvtojson.min.js
 review-passwords.js
 index.html.old
 Untitled-1.html
-Untitled-1.html
+
+# Article lives on michaelzenkay.com only — keep local for editing, don't publish to breastmri.org
+breast-mri-artifacts.html
+breast-mri-artifacts-gdocs.html
+artifacts
+artifacts_changes.patch
+images/artifacts/
+demo.html
