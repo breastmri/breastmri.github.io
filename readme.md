@@ -1,24 +1,24 @@
 # breastmri-site
 
-Working repo for the breast MRI artifacts article.
+Main collaborative site for breast MRI educational content.
 
 ## Publish target
 
-**michaelzenkay.com only** (via `michaelzenkay.github.io`).
-breastmri.org is reserved for the final polished version — nothing publishes there yet.
+This repo now publishes directly to the main breast MRI site.
 
 ## Workflow
 
-1. Edit `breast-mri-artifacts.html` here (review gate via `review-system.js`)
-2. Run `publish-hpc.bat` from `Z:\src\michaelzenkay.github.io` to sync to michaelzenkay.com
+1. Edit `breast-mri-artifacts.html` and assets in this repo.
+2. Commit and push this repo to publish updates.
 
-The publish script (`publish-hpc.ps1`) reads from this directory:
-- Copies `images/artifacts/` to `michaelzenkay.github.io/images/artifacts/`
-- Copies `breast-mri-artifacts.html` with review gate stripped to `michaelzenkay.github.io/`
+## Current public pages
 
-## What is gitignored (local only, not on breastmri.org)
+- `index.html` (navigation)
+- `old-index.html` (legacy teaching case gallery)
+- `breast-mri-artifacts.html` (public artifacts review article)
+- `figures/` (article images)
 
-- `breast-mri-artifacts.html` and related article files
-- `images/artifacts/`
+## Notes
 
-These publish to **michaelzenkay.com** only.
+- No password gate is required for the artifacts article.
+- `review-system.js` is not required for the public artifacts page.
