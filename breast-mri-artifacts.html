@@ -21,7 +21,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 body {
@@ -176,7 +176,6 @@ img {
   border-radius: 22px;
   padding: 28px 34px;
   box-shadow: var(--shadow);
-  scroll-margin-top: 24px;
 }
 
 .article-section > h2 {
@@ -1056,7 +1055,9 @@ Artifacts and Pitfalls in MR Imaging of the Breast.
 <li>Morelli JN, Runge VM, Ai F, et al. An Image-based Approach to
 Understanding the Physics of MR Artifacts. <em>Radiographics</em>.
 2011;31(3):849-866. <a href="https://pubmed.ncbi.nlm.nih.gov/21571661/">PubMed</a> | <a href="https://doi.org/10.1148/rg.313105115">DOI</a></li>
-<li>Graves MJ, Mitchell DG. Body MRI artifacts in clinical practice: a physicist's and radiologist's perspective. <em>J Magn Reson Imaging</em>. 2013;38(2):269-287. <a href="https://pubmed.ncbi.nlm.nih.gov/23960007/">PubMed</a> | <a href="https://doi.org/10.1002/jmri.24288">DOI</a></li>
+<li>Graves MJ, Mitchell DG. Body MRI artifacts in clinical practice: a
+physicist’s and radiologist’s perspective. <em>J Magn Reson
+Imaging</em>. 2013;38(2):269-287. <a href="https://pubmed.ncbi.nlm.nih.gov/23960007/">PubMed</a> | <a href="https://doi.org/10.1002/jmri.24288">DOI</a></li>
 <li>Macura KJ, Ouwerkerk R, Jacobs MA, Bluemke DA. Patterns of
 Enhancement on Breast MR Images: Interpretation and Imaging Pitfalls.
 <em>Radiographics</em>. 2006;26(6):1719-1734. <a href="https://pubmed.ncbi.nlm.nih.gov/17102046/">PubMed</a> | <a href="https://doi.org/10.1148/rg.266065025">DOI</a></li>
@@ -1094,39 +1095,84 @@ Screening. <em>J Magn Reson Imaging</em>. 2019;50(2):377-390. <a href="https://p
 Clinical MR Applications</em>. Springer; 2007. <a href="https://doi.org/10.1007/978-3-540-68879-2">DOI</a></li>
 </ol></section></article><div class="page-footer">Last updated: April 2, 2026</div></main></div>
 <script>
-(function () {
-  function getTarget(hash) {
-    if (!hash || hash.length < 2) return null;
-    try {
-      return document.querySelector(hash);
-    } catch (err) {
-      return null;
-    }
-  }
-  function jump(hash, behavior) {
-    var target = getTarget(hash);
-    if (!target) return;
-    target.scrollIntoView({ behavior: behavior || "auto", block: "start" });
-    // A second pass handles late layout shifts while images are still loading.
-    window.setTimeout(function () {
-      target.scrollIntoView({ behavior: "auto", block: "start" });
-    }, 450);
-  }
-  document.querySelectorAll('.nav-card a[href^="#"]').forEach(function (link) {
-    link.addEventListener("click", function (event) {
-      var hash = link.getAttribute("href");
-      if (!hash) return;
-      event.preventDefault();
-      history.replaceState(null, "", hash);
-      jump(hash, "smooth");
+  const PAGE_ID = 'artifacts';
+
+  window.reviewPageInit = function(reviewer) {
+    const API_URL = 'https://2tu79n9lw0.execute-api.us-east-1.amazonaws.com/comment';
+    const targets = document.querySelectorAll('.article-section > p, .figure-caption-body');
+
+    targets.forEach(function(el, idx) {
+      const id = 'p_' + idx + '_' + (el.textContent.trim().slice(0, 20).replace(/\W+/g, '_'));
+      const draftKey = 'draft_' + PAGE_ID + '_' + id;
+
+      const btn = document.createElement('button');
+      btn.className = 'para-note-btn';
+      btn.textContent = '+ note';
+
+      const saved = localStorage.getItem(draftKey);
+      if (saved) {
+        btn.textContent = '+ note (draft)';
+      }
+
+      el.appendChild(btn);
+
+      const panel = document.createElement('div');
+      panel.className = 'para-note-panel';
+      panel.innerHTML =
+        '<textarea placeholder="Note on this paragraph..."></textarea>' +
+        '<div class="para-note-actions">' +
+          '<button class="para-note-submit">Submit</button>' +
+          '<span class="para-note-status"></span>' +
+        '</div>';
+      el.after(panel);
+
+      const ta = panel.querySelector('textarea');
+      const submit = panel.querySelector('.para-note-submit');
+      const status = panel.querySelector('.para-note-status');
+      if (saved) ta.value = saved;
+
+      ta.addEventListener('input', function() {
+        const v = ta.value.trim();
+        localStorage.setItem(draftKey, ta.value);
+        btn.textContent = v ? '+ note (draft)' : '+ note';
+      });
+
+      btn.addEventListener('click', function() {
+        const open = panel.style.display === 'block';
+        panel.style.display = open ? 'none' : 'block';
+        if (!open) ta.focus();
+      });
+
+      submit.addEventListener('click', async function() {
+        const text = ta.value.trim();
+        if (!text) return;
+        submit.disabled = true;
+        status.textContent = 'Saving...';
+        status.className = 'para-note-status';
+        try {
+          const resp = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reviewer, section: id, text, page: PAGE_ID, ts: new Date().toISOString() }),
+          });
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          status.textContent = 'Saved';
+          status.className = 'para-note-status ok';
+          ta.value = '';
+          localStorage.removeItem(draftKey);
+          btn.textContent = '+ note';
+          setTimeout(function() {
+            panel.style.display = 'none';
+            status.textContent = '';
+          }, 1800);
+        } catch (e) {
+          status.textContent = 'Error';
+          status.className = 'para-note-status err';
+        } finally {
+          submit.disabled = false;
+        }
+      });
     });
-  });
-  window.addEventListener("hashchange", function () {
-    jump(window.location.hash, "auto");
-  });
-  window.addEventListener("load", function () {
-    if (window.location.hash) jump(window.location.hash, "auto");
-  });
-})();
+  };
 </script>
 </body></html>
